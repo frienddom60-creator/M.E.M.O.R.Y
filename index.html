@@ -4,36 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background: #000; color: #fff; text-align: center; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        .name-header { color: #f1c40f; font-size: 24px; margin-bottom: 20px; font-weight: bold; }
-        .card { width: 85%; max-width: 320px; padding: 25px; background: #111; border: 2px solid #f1c40f; border-radius: 25px; box-shadow: 0 0 15px rgba(241,196,15,0.3); }
-        .msg-text { font-size: 18px; line-height: 1.6; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-        .btn { margin-top: 25px; background: #f1c40f; color: #000; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+        body { 
+            background: radial-gradient(circle, #1a1a1a, #000); 
+            color: #fff; text-align: center; font-family: sans-serif; 
+            margin: 0; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; height: 100vh; overflow: hidden;
+        }
+        .name-header { 
+            color: #f1c40f; font-size: 24px; margin-bottom: 20px; font-weight: bold; 
+            text-shadow: 0 0 10px rgba(241,196,15,0.5);
+        }
+        .card { 
+            width: 85%; max-width: 340px; padding: 25px 20px; 
+            background: rgba(25, 25, 25, 0.9); border: 2px solid #f1c40f; 
+            border-radius: 25px; box-shadow: 0 10px 30px rgba(241,196,15,0.2);
+        }
+        .icon-circle { font-size: 40px; margin-bottom: 10px; }
+        .msg-text { 
+            font-size: 18px; line-height: 1.6; min-height: 100px; 
+            display: flex; align-items: center; justify-content: center; 
+            opacity: 1; transition: opacity 0.4s ease; padding: 0 10px;
+        }
+        #counter { 
+            font-size: 20px; color: #f1c40f; margin-top: 15px; 
+            font-weight: bold; border-top: 1px solid rgba(241,196,15,0.3); padding-top: 10px;
+        }
+        .btn { 
+            margin-top: 25px; background: linear-gradient(45deg, #f1c40f, #d4ac0d); 
+            color: #000; border: none; padding: 12px 35px; border-radius: 50px; 
+            font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(241,196,15,0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="name-header">For Shwe Yee Win 🌸</div>
+    <div class="name-header">For ရွှေရည်ဝင်း ✨</div>
     <div class="card">
-        <div class="msg-text" id="msg">ဂျပန်မှာ အဆင်ပြေပါစေ... 💪</div>
+        <div class="icon-circle" id="icon">🇯🇵</div>
+        <div class="msg-text" id="msg">ဂျပန်မှာ အဆင်ပြေပါစေ... နင်မရှိပေမယ့် ငါတို့တွေ အမြဲရှိနေမှာပါ</div>
+        <div id="counter">Loading...</div>
     </div>
     <button class="btn" onclick="nextStep()">Next Memory 💌</button>
 
     <script>
-        // စာသားများကို ဒီနေရာမှာ အသေသတ်မှတ်ထားပါတယ်
-        const memories = [
-            "ဂျပန်မှာ အဆင်ပြေပါစေ... 💪",
-            "နင့်ကိုအမြဲသတိရနေမယ်နော် ❤️",
-            "နင်ကအတော်ဆုံးမို့လို့ အောင်မြင်မှာပါ ✨",
-            "နေကောင်းအောင်နေပါ... နွေးနွေးထွေးထွေးနေပါ ❄️",
-            "Boss EDITH ဆီက အမှတ်တရလေးပါ 🛰️"
+        // Boss ရဲ့ စာသား ၁၀ ခု
+        const data = [
+            { icon: "🇯🇵", txt: "ဂျပန်မှာ အဆင်ပြေပါစေ... နင်မရှိပေမယ့် ငါတို့တွေ အမြဲရှိနေမှာပါ" },
+            { icon: "🌸", txt: "နင်သွားမယ့်လမ်းခရီးမှာ ပန်းခင်းသောလမ်းလေး ဖြစ်ပါစေနော်" },
+            { icon: "🍱", txt: "အစားမှန်မှန်စားဖို့နဲ့ အိပ်ရေးဝဝအိပ်ဖို့လည်း မမေ့နဲ့ဦး" },
+            { icon: "🧣", txt: "ဂျပန်က အေးတော့ နွေးနွေးထွေးထွေးနေပါ" },
+            { icon: "🦁", txt: "Xiao Zhan ပြောသလိုပဲ မုန်တိုင်းတွေပြီးရင် သာယာလာဦးမှာပါ" },
+            { icon: "❤️", txt: "နောင်တစ်ချိန် ပြန်ဆုံကြတဲ့အခါ အရင်ထက်ပိုပြီး ပျော်ကြရအောင်" },
+            { icon: "🕊️", txt: "နင်သွားမယ့်နေရာမှာ သူငယ်ချင်းကောင်းတွေ အများကြီးရပါစေ" },
+            { icon: "🏠", txt: "ပင်ပန်းတဲ့အခါတိုင်း ငါတို့တွေ ဒီမှာ အမြဲရှိနေတယ်နော်" },
+            { icon: "💪", txt: "အခက်အခဲတွေရှိရင်လည်း အားမလျော့ဘဲ ကြံ့ကြံ့ခံနိုင်ပါစေ" },
+            { icon: "💌", txt: "ဂရုစိုက်ပါ... ငါအမြဲရှိနေတယ်ဆိုတာ မမေ့နဲ့" }
         ];
 
-        let currentIndex = 0;
-
+        let i = 0;
         function nextStep() {
-            currentIndex = (currentIndex + 1) % memories.length;
-            document.getElementById('msg').innerHTML = memories[currentIndex];
+            const msgDiv = document.getElementById('msg');
+            const iconDiv = document.getElementById('icon');
+            msgDiv.style.opacity = 0;
+            setTimeout(() => {
+                i = (i + 1) % data.length;
+                iconDiv.innerText = data[i].icon;
+                msgDiv.innerText = data[i].txt;
+                msgDiv.style.opacity = 1;
+            }, 400);
         }
+
+        // ရက်စွဲတွက်ချက်ခြင်း
+        function updateCounter() {
+            const targetDate = new Date("2026-03-01"); // ဂျပန်ရောက်မည့်ရက်စွဲ (ပြင်ဆင်နိုင်သည်)
+            const now = new Date();
+            const diff = now - targetDate;
+            const counterDiv = document.getElementById("counter");
+
+            if (diff < 0) {
+                counterDiv.innerHTML = "မကြာခင် ရောက်တော့မယ် 😊";
+            } else {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                counterDiv.innerHTML = days + " ရက်မြောက်နေ့ 🇯🇵";
+            }
+        }
+        setInterval(updateCounter, 1000);
+        updateCounter();
     </script>
 </body>
 </html>
