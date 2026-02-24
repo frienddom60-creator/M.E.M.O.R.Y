@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #000; color: #fff; text-align: center; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .name-header { color: #f1c40f; font-size: 24px; margin-bottom: 20px; font-weight: bold; }
+        .card { width: 85%; max-width: 320px; padding: 25px; background: #111; border: 2px solid #f1c40f; border-radius: 25px; box-shadow: 0 0 15px rgba(241,196,15,0.3); position: relative; }
+        .msg-text { font-size: 18px; line-height: 1.6; min-height: 80px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        #counter { font-size: 22px; color: #f1c40f; margin-top: 15px; font-weight: bold; }
+        .btn { margin-top: 25px; background: #f1c40f; color: #000; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="name-header">For Shwe Yee Win 🌸</div>
+    <div class="card">
+        <div class="msg-text" id="msg">ဂျပန်မှာ အဆင်ပြေပါစေ... 💪</div>
+        <div id="counter"></div>
+    </div>
+    <button class="btn" onclick="nextStep()">Next Memory 💌</button>
+
+    <script>
+        // --- သိမ်းဆည်းခြင်းဆိုင်ရာ Logic (Offline ရစေရန်) ---
+        const content = {
+            txt: [
+                "နင့်ကိုအမြဲသတိရနေမယ်နော် ❤️", 
+                "နင်ကအတော်ဆုံးမို့လို့ အောင်မြင်မှာပါ ✨", 
+                "နေကောင်းအောင်နေပါ... နွေးနွေးထွေးထွေးနေပါ ❄️",
+                "Boss EDITH ဆီက အမှတ်တရလေးပါ 🛰️"
+            ],
+            date: "2026-03-01" // ဂျပန်ရောက်မည့်ရက်စွဲ (နမူနာ)
+        };
+
+        // Browser/App Memory ထဲမှာ အချက်အလက်တွေကို အမြဲသိမ်းထားမယ်
+        localStorage.setItem('syw_offline_data', JSON.stringify(content));
+
+        let i = 0;
+        function nextStep() {
+            // Memory ထဲကနေ ပြန်ထုတ်ဖတ်မယ်
+            const data = JSON.parse(localStorage.getItem('syw_offline_data'));
+            const msgDiv = document.getElementById('msg');
+            msgDiv.style.opacity = 0;
+            setTimeout(() => {
+                msgDiv.innerHTML = data.txt[i];
+                msgDiv.style.opacity = 1;
+                i = (i + 1) % data.txt.length;
+            }, 300);
+        }
+
+        function updateCounter() {
+            const data = JSON.parse(localStorage.getItem('syw_offline_data'));
+            const arrivalDate = new Date(data.date);
+            const now = new Date();
+            const diff = now - arrivalDate;
+            
+            if (diff < 0) {
+                document.getElementById("counter").innerHTML = "မကြာခင် ရောက်တော့မယ် 😊";
+            } else {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                document.getElementById("counter").innerHTML = days + " ရက်မြောက်နေ့ 🇯🇵";
+            }
+        }
+
+        // App ပွင့်တာနဲ့ Memory ထဲကနေ တိုက်ရိုက်ပြမယ်
+        window.onload = updateCounter;
+    </script>
+</body>
+</html>
