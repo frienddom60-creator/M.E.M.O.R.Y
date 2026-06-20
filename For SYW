@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #FFB6C1; color: #fff; text-align: center; font-family: 'Comfortaa', cursive; padding: 20px; transition: 0.5s; }
+        .name-header { color: #8e44ad; font-size: 26px; margin-bottom: 20px; font-weight: bold; }
+        .card { width: 85%; max-width: 320px; min-height: 420px; background: #ff69b4; border: 2px solid #fff; border-radius: 20px; margin: auto; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: 0.5s; }
+        .night-mode { background: #1a1a2e; }
+        .night-mode .card { background: #16213e; border-color: #f1c40f; }
+        .night-mode .name-header { color: #f1c40f; }
+        .icon-circle { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #f1c40f; margin: auto; display: flex; align-items: center; justify-content: center; font-size: 50px; background: white; margin-bottom: 10px; animation: pulse 2s infinite; }
+        .snow-zone { position: relative; overflow: hidden; min-height: 180px; display: flex; align-items: center; justify-content: center; }
+        .msg-text { font-size: 18px; line-height: 1.6; color: #f1c40f; z-index: 2; padding: 10px; min-height: 100px; font-weight: bold; }
+        .date-display { font-size: 16px; color: #ff0000; margin-top: 15px; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px; background: rgba(255,255,255,0.2); border-radius: 10px; }
+        .btn { margin-top: 20px; background: #f1c40f; color: #000; border: none; padding: 15px 30px; border-radius: 25px; font-weight: bold; width: 80%; cursor: pointer; align-self: center; transition: 0.3s; }
+        .btn-pulse { animation: pulse 2s infinite; }
+        .boss-logo { margin-top: 30px; display: inline-block; padding: 10px 20px; border: 2px solid rgba(241, 196, 15, 0.5); border-radius: 15px; background: rgba(142, 68, 173, 0.2); }
+        .signature { font-size: 14px; color: #f1c40f; letter-spacing: 3px; font-weight: bold; text-shadow: 0 0 10px rgba(241, 196, 15, 0.8); animation: logoGlow 2s infinite ease-in-out; }
+        @keyframes pulse { 0% { transform: scale(1); } 70% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes logoGlow { 0%, 100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+        .snowflake { position: absolute; top: -20px; color: white; user-select: none; z-index: 1; pointer-events: none; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(220px); } }
+    </style>
+</head>
+<body id="mainBody">
+    <audio id="bgMusic" loop>
+        <source src="https://files.catbox.moe/bywdbx.mp4" type="audio/mp4">
+    </audio>
+
+    <div class="name-header">For ရွှေရည်ဝင်း ✨</div>
+    <div class="card" id="mainCard">
+        <div class="icon-circle" id="icon">💌</div>
+        <div class="snow-zone" id="snow-container">
+            <div class="msg-text" id="msg">Next ကိုနှိပ်ပါ... 💌</div>
+        </div>
+        <div class="date-display" id="day-counter">တွက်ချက်နေသည်... ⏳</div> 
+        <button class="btn btn-pulse" id="nextBtn" onclick="nextStep()">Next ကိုနှိပ်ပါ 🎶</button>
+    </div>
+
+    <div class="boss-logo">
+        <div class="signature">FROM: TYK HMA 🛡️</div>
+    </div>
+
+    <script>
+        // ဂျပန်သွားမယ့်ရက် (2026 March 29)
+        const departureDate = new Date(2026, 2, 29); 
+        
+        function updateDate() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const diffTime = departureDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const display = document.getElementById("day-counter");
+
+            if (diffDays > 0) {
+                display.innerHTML = `ဂျပန်သွားဖို့ ${diffDays} ရက်ပဲ လိုတော့တယ် ✈️`;
+            } else if (diffDays === 0) {
+                display.innerHTML = `ဒီနေ့ ဂျပန်သွားရမယ့်နေ့ပါ... Safe Flight! 🌸`;
+            } else {
+                display.innerHTML = `ဂျပန်ရောက်နေတာ ${Math.abs(diffDays)} ရက်ရှိပြီ 🇯🇵`;
+            }
+        }
+
+        const data = [
+            { icon: "🇯🇵", txt: "ဂျပန်မှာ အဆင်ပြေပါစေ... နင်မရှိပေမဲ့ ငါတို့အမှတ်တရတွေက အမြဲရှိနေမှာပါ", snow: false },
+            { icon: "🌍", txt: "မိုင်ပေါင်းထောင်ချီ ဝေးနေပါစေ... ငါတို့ရဲ့ ခင်မင်မှုကတော့ အနီးဆုံးမှာပဲ ရှိနေမှာပါ", snow: false },
+            { icon: "🌸", txt: "နင်သွားမယ့်လမ်းခရီးမှာ ပန်းခင်းသောလမ်းလေး ဖြစ်ပါစေ", snow: false },
+            { icon: "💪", txt: "အခက်အခဲရှိရင် အားမငယ်နဲ့နော်... နင့်နောက်မှာ ငါအမြဲရှိနေတယ်ဆိုတာ မမေ့နဲ့", snow: false },
+            { icon: "📸", txt: "ဂျပန်ရောက်ရင် ပုံလှလှလေးတွေ အများကြီးရိုက်ပြီး ပို့ပေးဦးနော်", snow: false },
+            { icon: "🍀", txt: "နင့်ရဲ့ အိမ်မက်တွေ အားလုံး တစ်ခုမကျန် အကောင်အထည်ဖော်နိုင်ပါစေ", snow: false },
+            { icon: "🍱", txt: "အစားမှန်မှန်စားဖို့နဲ့ အိပ်ရေးဝဝအိပ်ဖို့လည်း ဂရုစိုက်ပါ", snow: false },
+            { icon: "💌", txt: "ဘယ်လောက်ပဲ အလုပ်ရှုပ်ရှုပ် ကျန်းမာရေးကိုတော့ အမြဲ ပထမဦးစားပေးပါ", snow: false },
+            { icon: "🌟", txt: "နင်က ငါ့အတွက်တော့ အမြဲတမ်း အတော်ဆုံးနဲ့ အတောက်ပဆုံး သူငယ်ချင်းပါ", snow: false },
+            { icon: "✈️", txt: "လေယာဉ်ပေါ်ရောက်ရင်လည်း ကြောက်မနေနဲ့ဦး... ငါတို့ဆုတောင်းတွေ နင့်ဆီမှာ ရှိတယ်", snow: false },
+            { icon: "🌙", txt: "ညဘက်တွေ အလုပ်ပင်ပန်းလို့ အိမ်လွမ်းရင်လည်း ဖုန်းဆက်လိုက်နော်", snow: false },
+            { icon: "🍵", txt: "ဂျပန်က လက်ဖက်ရည်ကြမ်းလေးတွေ သောက်ပြီး စိတ်အပန်းဖြေဖို့လည်း မမေ့နဲ့", snow: false },
+            { icon: "🎈", txt: "နင့်ရဲ့ အောင်မြင်မှုသတင်းတွေကို ဒီကနေ ဝမ်းသာအားရ စောင့်မျှော်နေမယ်", snow: false },
+            { icon: "🐰", txt: "ရှောင်ကျန့်ပြောသလိုပေါ့... 'အမြဲတမ်း အကောင်းဆုံးဖြစ်နေဖို့ မလိုပါဘူး၊ ကြိုးစားနေဖို့ပဲ လိုတာပါ'", snow: false },
+            { icon: "🤝", txt: "ဘယ်တော့မှ မပြောင်းလဲတဲ့ သူငယ်ချင်းတွေအဖြစ် ထာဝရ ရှိနေကြမယ်နော်", snow: false },
+            { icon: "🧣", txt: "ဂျပန်က အေးတော့ နွေးနွေးထွေးထွေးနေပါ။ နင်က ငါ့အတွက် အမြဲတမ်း အရေးကြီးတဲ့သူမို့လို့ပါ", snow: true }
+        ];
+
+        let currentStep = 0;
+        let snowInterval = null;
+        let musicStarted = false;
+        let isTyping = false;
+
+        function nextStep() {
+            if (isTyping) return;
+            document.getElementById("nextBtn").classList.remove("btn-pulse");
+            const music = document.getElementById('bgMusic');
+            if (!musicStarted) { 
+                music.play().catch(e => { console.log("Audio play blocked", e); }); 
+                musicStarted = true; 
+            }
+            
+            isTyping = true;
+            document.getElementById("icon").innerText = data[currentStep].icon;
+            const zone = document.getElementById('snow-container');
+            
+            if (data[currentStep].snow) {
+                if (!snowInterval) snowInterval = setInterval(createSnowflake, 200);
+            } else {
+                clearInterval(snowInterval); snowInterval = null;
+                const snowflakes = zone.getElementsByClassName('snowflake');
+                while(snowflakes[0]) snowflakes[0].parentNode.removeChild(snowflakes[0]);
+            }
+
+            let text = data[currentStep].txt;
+            let i = 0;
+            document.getElementById("msg").innerHTML = ""; 
+            
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    document.getElementById("msg").innerHTML = text.substring(0, i+1);
+                    i++;
+                } else {
+                    clearInterval(timer);
+                    isTyping = false;
+                    document.getElementById("nextBtn").classList.add("btn-pulse");
+                    currentStep = (currentStep + 1) % data.length; 
+                }
+            }, 70); 
+        }
+
+        window.onload = () => {
+            updateDate();
+            const hour = new Date().getHours();
+            if (hour < 6 || hour >= 18) {
+                document.body.classList.add("night-mode");
+            }
+        };
+
+        function createSnowflake() {
+            const zone = document.getElementById('snow-container');
+            const snow = document.createElement('div');
+            snow.classList.add('snowflake');
+            snow.innerHTML = '❄';
+            snow.style.left = Math.random() * 100 + '%';
+            snow.style.fontSize = Math.random() * 10 + 10 + 'px';
+            snow.style.animationDuration = Math.random() * 3 + 2 + 's';
+            zone.appendChild(snow);
+            setTimeout(() => { snow.remove(); }, 3500);
+        }
+    </script>
+</body>
+</html>
